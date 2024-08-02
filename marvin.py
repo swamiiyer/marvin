@@ -419,28 +419,24 @@ def simulate(machineCodes):
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] == reg[arg2] else pc + 1
-            pc += 1
         # jgtn
         elif opcode == "jgtn":
             arg1 = int(code[8:12], 2)
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] > reg[arg2] else pc + 1
-            pc += 1
         # jltn
         elif opcode == "jltn":
             arg1 = int(code[8:12], 2)
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] < reg[arg2] else pc + 1
-            pc += 1
         # jnen
         elif opcode == "jnen":
             arg1 = int(code[8:12], 2)
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] != reg[arg2] else pc + 1
-            pc += 1
 
 
 # Returns True if s encodes an integer, and False otherwise.
