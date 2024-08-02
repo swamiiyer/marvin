@@ -161,7 +161,7 @@ def main(argv):
 # Assembles the instructions in tuples and returns a list containing the corresponding machine
 # codes. Prints the assembled instructions to stdout if verbose is True.
 def assemble(tuples, verbose):
-    machineCode = []
+    machineCodes, verboseOutput = [], []
     for tuple in tuples:
         ID, opcode, args = tuple[1], tuple[2], tuple[3:]
         bArg1, bArg2, bArg3 = "", "", ""
@@ -201,14 +201,18 @@ def assemble(tuples, verbose):
 
         op = opcode2bin[opcode]
         code = int(op, 2) << 24 | int(bArg1, 2) << 16 | int(bArg2, 2) << 8 | int(bArg3, 2)
-        machineCode.append(code)
+        machineCodes.append(code)
 
-        if verbose:
-            binCode = "%5s: %s %s %s %s" % (ID, opcode2bin[opcode], bArg1, bArg2, bArg3)
-            asmCode = "%5s: %-6s %s %s %s" % (ID, opcode, aArg1, aArg2, aArg3)
-            print("%-50s        %s" % (binCode, asmCode))
+        binCode = "%5s: %s %s %s %s" % (ID, opcode2bin[opcode], bArg1, bArg2, bArg3)
+        asmCode = "%5s: %-6s %s %s %s" % (ID, opcode, aArg1, aArg2, aArg3)
+        verboseOutput.append("%-50s        %s" % (binCode, asmCode))
 
-    return machineCode
+    if verbose:
+        for s in verboseOutput:
+            print(s)
+        print()
+
+    return machineCodes
 
 
 # Simulate the assembled instructions in machineCodes.
