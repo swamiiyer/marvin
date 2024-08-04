@@ -4,12 +4,12 @@
 Usage: %(script_name)s [-v] <.marv file>
 
 This program serves as an emulator for a register-based machine called Marvin (named after
-the paranoid android character, Marvin, from The Hitchhiker's Guide to the Galaxy by Douglas Adams.
-The design of the machine was inspired by that of the Harvey Mudd Miniature Machine (HMMM)
-developed at Harvey Mudd College. The program accepts a .marv file as input, assembles and
-simulates the instructions within, and prints any output to stdout. Any input to the .marv
-program is via stdin. If the optional -v argument is specified, the emulator prints the assembled
-instructions to stdout before simulating them.
+the paranoid android character, Marvin, from The Hitchhiker's Guide to the Galaxy by 
+Douglas Adams). The design of the machine was inspired by that of the Harvey Mudd 
+Miniature Machine (HMMM) developed at Harvey Mudd College. The program accepts a .marv file 
+as input, assembles and simulates the instructions within, and prints any output to stdout. 
+Any input to the .marv program is via stdin. If the optional -v argument is specified, 
+the emulator prints the assembled instructions to stdout before simulating them.
 """
 
 import os, sys
