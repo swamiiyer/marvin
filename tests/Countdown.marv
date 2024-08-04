@@ -1,0 +1,8 @@
+# Accepts n (int) from standard input and writes a countdown from n to 0 to standard output.
+
+0    read     r1          # r1 = n
+1    jltzn    r1 5        # jump to 5 if r1 < 0
+2    write    r1          # write r1
+3    addn     r1 -1       # r1 = r1 - 1
+4    jumpn    1           # jump to 1
+5    halt                 # halt the machine
