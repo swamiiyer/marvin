@@ -1,27 +1,27 @@
 # Accepts n (int) and k (int) from standard input and writes C(n, k) = n!/(k!(n-k)!) to standard output.
 
-0     read     r3            # r3 = n
-1     read     r4            # r4 = k
-2     copy     r1 r3         # r1 = r3
-3     calln    r14 13        # r13 = factorialIter(r1)
-4     copy     r5 r13        # r5 = r13
-5     copy     r1 r4         # r1 = r4
-6     calln    r14 13        # r13 = factorialIter(r1)
-7     div      r5 r5 r13     # r5 = r5 / r13
-8     sub      r1 r3 r4      # r1 = r3 - r4
-9     calln    r14 13        # r13 = factorialIter(r1)
-10    div      r5 r5 r13     # r5 = r5 / r13
-11    write    r5            # write r5
+0     read     r3            # read n
+1     read     r4            # read k
+2     copy     r1 r3         # r1 = n
+3     calln    r14 13        # n! = factorial(n)
+4     copy     r5 r13        # r5 = n!
+5     copy     r1 r4         # r1 = k
+6     calln    r14 13        # k! = factorial(k)
+7     div      r5 r5 r13     # r5 = n!/k!
+8     sub      r1 r3 r4      # r1 = n - k
+9     calln    r14 13        # (n-k)! = factorial(n-k)
+10    div      r5 r5 r13     # r5 = n!/(k!(n-k)!)
+11    write    r5            # write n!/(k!(n-k)!)
 12    halt                   # halt the machine
 
-# int factorialIter(int n):
+# int factorial(int n):
 #   input : r1 = n
 #   output: r13 = n!
 
-13    setn     r13 1         # r13 = 1
-14    copy     r2 r1         # r2 = r1
-15    jeqzn    r2 19         # jump to 19 if r2 = 0
-16    mul      r13 r13 r2    # r13 = r13 * r2
-17    addn     r2 -1         # r2 = r2 - 1
+13    setn     r13 1         # output = 1
+14    copy     r2 r1         # i = n
+15    jeqzn    r2 19         # if i = 0 jump to 19
+16    mul      r13 r13 r2    # output = output * i
+17    addn     r2 -1         # i = i - 1
 18    jumpn    15            # jump to 15
 19    jumpr    r14           # jump to caller

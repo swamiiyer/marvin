@@ -2,22 +2,22 @@
 
 0     setn      r15 8192      # r15 = 8192 (stack pointer)
 
-1     read      r1            # r1 = n
-2     calln     r14 7         # r13 = factorialIter(r1)
-3     write     r13           # write r13
-4     calln     r14 14        # r13 = factorialRec(r1)
-5     write     r13           # write r13
+1     read      r1            # read n
+2     calln     r14 7         # n! = factorialIter(n)
+3     write     r13           # write n!
+4     calln     r14 14        # n! = factorialRec(n)
+5     write     r13           # write n!
 6     halt                    # halt the machine
 
 # int factorialIter(int n):
 #   input : r1 = n
 #   output: r13 = n!
 
-7     setn      r13 1         # r13 = 1
-8     copy      r2 r1         # r2 = r1
-9     jeqzn     r2 13         # jump to 13 if r2 = 0
-10    mul       r13 r13 r2    # r13 = r13 * r2
-11    addn      r2 -1         # r2 = r2 - 1
+7     setn      r13 1         # output = 1
+8     copy      r2 r1         # i = n
+9     jeqzn     r2 13         # if i = 0 jump to 13
+10    mul       r13 r13 r2    # output = output * i
+11    addn      r2 -1         # i = i - 1
 12    jumpn     9             # jump to 9
 13    jumpr     r14           # jump to caller
 
@@ -30,17 +30,17 @@
 15    pushr     r1 r15        # memory[r15++] = r1  (save r1)
 16    pushr     r2 r15        # memory[r15++] = r2  (save r2)
 
-17    jnezn     r1 20         # jump to 20 if r1 != 0
+17    jnezn     r1 20         # if n != 0 jump to 20
 
 # Base case.
-18    setn      r13 1         # r13 = 1
+18    setn      r13 1         # output = 1
 19    jumpn     24            # jump to 24
 
 # Recursive step.
-20    copy      r2 r1         # r2 = r1
-21    addn      r1 -1         # r1 = r1 - 1
-22    calln     r14 14        # r13 = factorialRec(r1)
-23    mul       r13 r2 r13    # r13 = r2 * r13
+20    copy      r2 r1         # r2 = n
+21    addn      r1 -1         # n = n - 1
+22    calln     r14 14        # (n-1)! = factorialRec(n-1)
+23    mul       r13 r2 r13    # n! = n*(n-1)!
 
 # Restore register values from memory.
 24    popr      r2 r15        # r2 = memory[--r15] (restore r2)
