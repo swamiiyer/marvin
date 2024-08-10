@@ -19,8 +19,8 @@ opcode2bin = {"halt": "00000000", "read": "00000001", "write": "00000010", "nop"
               "set0": "00000100", "set1": "00000101", "setn": "00000110", "addn": "00000111",
               "copy": "00001000", "neg": "00001001", "add": "00001010", "sub": "00001011",
               "mul": "00001100", "div": "00001101", "mod": "00001110", "jumpn": "00001111",
-              "jumpr": "00010000", "jeqzn": "00010001", "jnezn": "00010010", "jgtzn": "00010011",
-              "jltzn": "00010110", "jeqn": "00010100", "jnen": "00010101", "jgtn": "00010111",
+              "jumpr": "00010000", "jeqzn": "00010001", "jnezn": "00010010", "jgen": "00010011",
+              "jlen": "00010110", "jeqn": "00010100", "jnen": "00010101", "jgtn": "00010111",
               "jltn": "00011000", "calln": "00011001", "pushr": "00011010", "popr": "00011011",
               "loadn": "00011100", "storen": "00011101", "loadr": "00011110", "storer": "00011111"}
 
@@ -104,8 +104,7 @@ def main(argv):
             if not validReg(toks[3]):
                 sys.exit("Error %s@%d: invalid register '%s'" % (inFile, lineno, toks[3]))
             tuples.append((lineno, ID, opcode, toks[2], toks[3]))
-        elif opcode in {"addn", "calln", "jeqzn", "jgtzn", "jltzn", "jnezn", "loadn", "setn",
-                        "storen"}:
+        elif opcode in {"addn", "calln", "jeqzn", "jnezn", "loadn", "setn", "storen"}:
             if len(args) != 2:
                 sys.exit("Error %s@%d: '%s' expects 2 arguments, rX N" % (inFile, lineno, toks[1]))
             if not validReg(toks[2]):
@@ -124,7 +123,7 @@ def main(argv):
             if not validReg(toks[4]):
                 sys.exit("Error %s@%d: invalid register '%s'" % (inFile, lineno, toks[4]))
             tuples.append((lineno, ID, opcode, toks[2], toks[3], toks[4]))
-        elif opcode in {"jeqn", "jgtn", "jltn", "jnen"}:
+        elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"}:
             if len(args) != 3:
                 sys.exit("Error %s@%d: '%s' expects 3 arguments, rX rY N" \
                          % (inFile, lineno, toks[1]))
@@ -145,9 +144,9 @@ def main(argv):
             sys.exit("Error %s@%d: invalid number '%s'" % (inFile, lineno, args[1]))
         elif opcode in {"loadn", "storen"} and not validAddr(args[1]):
             sys.exit("Error %s@%d: invalid address '%s'" % (inFile, lineno, args[1]))
-        elif opcode in {"calln", "jeqzn", "jgtzn", "jltzn", "jnezn"} and args[1] >= len(tuples):
+        elif opcode in {"calln", "jeqzn", "jnezn"} and args[1] >= len(tuples):
             sys.exit("Error %s@%d: invalid instruction address '%s'" % (inFile, lineno, args[1]))
-        elif opcode in {"jeqn", "jgtn", "jltn", "jnen"} and args[2] >= len(tuples):
+        elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"} and args[2] >= len(tuples):
             sys.exit("Error %s@%d: invalid instruction address '%s'" % (inFile, lineno, args[2]))
 
     # Assemble the instructions into machine codes.
@@ -184,7 +183,7 @@ def assemble(tuples, verbose):
             s = format(args[1], "016b").replace("-", "1")  # msb(s) is 1 if args[1] < 0
             bArg2, bArg3 = s[:8], s[8:]
             aArg1, aArg2 = args[0], args[1]
-        elif opcode in {"calln", "jeqzn", "jgtzn", "jltzn", "jnezn", "loadn", "storen"}:
+        elif opcode in {"calln", "jeqzn", "jnezn", "loadn", "storen"}:
             bArg1 = "0000" + reg2bin[args[0]]
             s = format(args[1], "016b")
             bArg2, bArg3 = s[:8], s[8:]
@@ -193,7 +192,7 @@ def assemble(tuples, verbose):
             bArg1, bArg2, bArg3 = \
                 "00000000", "0000" + reg2bin[args[0]], reg2bin[args[1]] + reg2bin[args[2]]
             aArg1, aArg2, aArg3 = args[0], args[1], args[2]
-        elif opcode in {"jeqn", "jgtn", "jltn", "jnen"}:
+        elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"}:
             bArg1 = reg2bin[args[0]] + reg2bin[args[1]]
             s = format(args[2], "016b")
             bArg2, bArg3 = s[:8], s[8:]
@@ -341,16 +340,6 @@ def simulate(machineCodes):
             arg1 = int(code[12:16], 2)
             arg2 = int(code[16:], 2)
             pc = arg2 if reg[arg1] == 0 else pc + 1
-        # jgtzn
-        elif opcode == "jgtzn":
-            arg1 = int(code[12:16], 2)
-            arg2 = int(code[16:], 2)
-            pc = arg2 if reg[arg1] > 0 else pc + 1
-        # jltzn
-        elif opcode == "jltzn":
-            arg1 = int(code[12:16], 2)
-            arg2 = int(code[16:], 2)
-            pc = arg2 if reg[arg1] < 0 else pc + 1
         # jnezn
         elif opcode == "jnezn":
             arg1 = int(code[12:16], 2)
@@ -419,12 +408,24 @@ def simulate(machineCodes):
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] == reg[arg2] else pc + 1
+        # jgen
+        elif opcode == "jgen":
+            arg1 = int(code[8:12], 2)
+            arg2 = int(code[12:16], 2)
+            arg3 = int(code[16:], 2)
+            pc = arg3 if reg[arg1] >= reg[arg2] else pc + 1
         # jgtn
         elif opcode == "jgtn":
             arg1 = int(code[8:12], 2)
             arg2 = int(code[12:16], 2)
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] > reg[arg2] else pc + 1
+        # jlen
+        elif opcode == "jlen":
+            arg1 = int(code[8:12], 2)
+            arg2 = int(code[12:16], 2)
+            arg3 = int(code[16:], 2)
+            pc = arg3 if reg[arg1] <= reg[arg2] else pc + 1
         # jltn
         elif opcode == "jltn":
             arg1 = int(code[8:12], 2)
