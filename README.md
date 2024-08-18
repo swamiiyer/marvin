@@ -18,7 +18,7 @@ the emulator prints the assembled instructions to stdout before simulating them.
 
 ```
 
-Here is a sample Marvin program called `Coundown.marv` that accepts $n$ (int) from standard input and writes to standard output a countdown from $n$ to 0.
+Here is a sample Marvin program called `Coundown.marv` that accepts `n` (int) from standard input and writes to standard output a countdown from `n` to 0.
 ```
 # Accepts n (int) from standard input and writes a countdown from n to 0 to standard output.
 
