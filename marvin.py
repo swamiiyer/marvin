@@ -221,6 +221,9 @@ def simulate(machineCodes):
     pc = 0  # program counter
     ir = 0  # instruction register
 
+    # Initialize the frame and stack pointers to 8192 (the base address of the stack).
+    reg[14], reg[15] = 8192, 8192
+
     # Load the machine codes into memory starting at location 0.
     for i, v in enumerate(machineCodes):
         mem[i] = v

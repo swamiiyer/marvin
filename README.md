@@ -22,23 +22,25 @@ Here is a sample Marvin program called `Coundown.marv` that accepts `n` (int) fr
 ```
 # Accepts n (int) from standard input and writes a countdown from n to 0 to standard output.
 
-0    read     r1          # read n
-1    jltn     r1 r0 5     # if n < 0 jump to 5
-2    write    r1          # write n
-3    addn     r1 -1       # n = n - 1
-4    jumpn    1           # jump to 2
-5    halt                 # halt the machine
+0    read     r0          # read n
+1    set0     r1          # zero = 0
+2    jltn     r0 r1 6     # if n < zero jump to 6
+3    write    r0          # write n
+4    addn     r0 -1       # n = n - 1
+5    jumpn    2           # jump to 2
+6    halt                 # halt the machine
 ```
 
 Here is the output from running `Countdown.marv` using `marvin.py`:
 ```
 $ python3 marvin.py -v Countdown.marv
-    0: 00000001 00000000 00000000 00000001                    0: read   r1  
-    1: 00011000 00010000 00000000 00000101                    1: jltn   r1 r0 5
-    2: 00000010 00000000 00000000 00000001                    2: write  r1  
-    3: 00000111 00000001 10000000 00000001                    3: addn   r1 -1 
-    4: 00001111 00000000 00000000 00000001                    4: jumpn  1  
-    5: 00000000 00000000 00000000 00000000                    5: halt     
+    0: 00000001 00000000 00000000 00000000                    0: read   r0  
+    1: 00000100 00000000 00000000 00000001                    1: set0   r1  
+    2: 00011000 00000001 00000000 00000110                    2: jltn   r0 r1 6
+    3: 00000010 00000000 00000000 00000000                    3: write  r0  
+    4: 00000111 00000000 10000000 00000001                    4: addn   r0 -1 
+    5: 00001111 00000000 00000000 00000010                    5: jumpn  2  
+    6: 00000000 00000000 00000000 00000000                    6: halt     
 
 5
 5
