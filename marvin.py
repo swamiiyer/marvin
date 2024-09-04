@@ -104,7 +104,7 @@ def main(argv):
             if not validReg(toks[3]):
                 sys.exit("Error %s@%d: invalid register '%s'" % (inFile, lineno, toks[3]))
             tuples.append((lineno, ID, opcode, toks[2], toks[3]))
-        elif opcode in {"addn", "calln", "jeqzn", "jnezn", "loadn", "setn", "storen"}:
+        elif opcode in {"addn", "calln", "jeqzn", "jnezn", "setn"}:
             if len(args) != 2:
                 sys.exit("Error %s@%d: '%s' expects 2 arguments, rX N" % (inFile, lineno, toks[1]))
             if not validReg(toks[2]):
@@ -123,7 +123,7 @@ def main(argv):
             if not validReg(toks[4]):
                 sys.exit("Error %s@%d: invalid register '%s'" % (inFile, lineno, toks[4]))
             tuples.append((lineno, ID, opcode, toks[2], toks[3], toks[4]))
-        elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"}:
+        elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen", "loadn", "storen"}:
             if len(args) != 3:
                 sys.exit("Error %s@%d: '%s' expects 3 arguments, rX rY N" \
                          % (inFile, lineno, toks[1]))
@@ -142,8 +142,8 @@ def main(argv):
             sys.exit("Error %s@%d: invalid instruction address '%s'" % (inFile, lineno, args[0]))
         elif opcode in {"addn", "setn"} and not validNum(args[1]):
             sys.exit("Error %s@%d: invalid number '%s'" % (inFile, lineno, args[1]))
-        elif opcode in {"loadn", "storen"} and not validAddr(args[1]):
-            sys.exit("Error %s@%d: invalid address '%s'" % (inFile, lineno, args[1]))
+        elif opcode in {"loadn", "storen"} and not validNum(args[2]):
+            sys.exit("Error %s@%d: invalid address '%s'" % (inFile, lineno, args[2]))
         elif opcode in {"calln", "jeqzn", "jnezn"} and args[1] >= len(tuples):
             sys.exit("Error %s@%d: invalid instruction address '%s'" % (inFile, lineno, args[1]))
         elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"} and args[2] >= len(tuples):
@@ -183,7 +183,7 @@ def assemble(tuples, verbose):
             s = format(args[1], "016b").replace("-", "1")  # msb(s) is 1 if args[1] < 0
             bArg2, bArg3 = s[:8], s[8:]
             aArg1, aArg2 = args[0], args[1]
-        elif opcode in {"calln", "jeqzn", "jnezn", "loadn", "storen"}:
+        elif opcode in {"calln", "jeqzn", "jnezn"}:
             bArg1 = "0000" + reg2bin[args[0]]
             s = format(args[1], "016b")
             bArg2, bArg3 = s[:8], s[8:]
@@ -195,6 +195,11 @@ def assemble(tuples, verbose):
         elif opcode in {"jeqn", "jgen", "jgtn", "jlen", "jltn", "jnen"}:
             bArg1 = reg2bin[args[0]] + reg2bin[args[1]]
             s = format(args[2], "016b")
+            bArg2, bArg3 = s[:8], s[8:]
+            aArg1, aArg2, aArg3 = args[0], args[1], args[2]
+        elif opcode in {"loadn", "storen"}:
+            bArg1 = reg2bin[args[0]] + reg2bin[args[1]]
+            s = format(args[2], "016b").replace("-", "1")  # msb(s) is 1 if args[1] < 0
             bArg2, bArg3 = s[:8], s[8:]
             aArg1, aArg2, aArg3 = args[0], args[1], args[2]
 
@@ -350,9 +355,14 @@ def simulate(machineCodes):
             pc = arg2 if reg[arg1] != 0 else pc + 1
         # loadn
         elif opcode == "loadn":
-            arg1 = int(code[12:16], 2)
-            arg2 = int(code[16:], 2)
-            reg[arg1] = mem[arg2]
+            arg1 = int(code[8:12], 2)
+            arg2 = int(code[12:16], 2)
+            arg3, arg3sign = code[16:], 1
+            if arg3.startswith("1"):
+                arg3 = "0" + arg3[1:]
+                arg3sign = -1
+            arg3 = arg3sign * int(arg3, 2)
+            reg[arg1] = mem[reg[arg2] + arg3]
             pc += 1
         # setn
         elif opcode == "setn":
@@ -366,9 +376,14 @@ def simulate(machineCodes):
             pc += 1
         # storen
         elif opcode == "storen":
-            arg1 = int(code[12:16], 2)
-            arg2 = int(code[16:], 2)
-            mem[arg2] = reg[arg1]
+            arg1 = int(code[8:12], 2)
+            arg2 = int(code[12:16], 2)
+            arg3, arg3sign = code[16:], 1
+            if arg3.startswith("1"):
+                arg3 = "0" + arg3[1:]
+                arg3sign = -1
+            arg3 = arg3sign * int(arg3, 2)
+            mem[reg[arg2] + arg3] = reg[arg1]
             pc += 1
         # add
         elif opcode == "add":
@@ -461,11 +476,6 @@ def validNum(n):
 # Return True if s is "r" followed by a number from the interval [0, 15], and False otherwise.
 def validReg(s):
     return s in {"r" + str(i) for i in range(16)}
-
-
-# Return True if n is a valid unsigned 16-bit integer, and False otherwise.
-def validAddr(n):
-    return 0 <= n <= 2 ** 16 - 1
 
 
 if __name__ == "__main__":

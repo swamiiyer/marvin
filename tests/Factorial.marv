@@ -22,32 +22,28 @@
 10    pushr     r1 r15        # mem[sp++] = r1
 11    pushr     r2 r15        # mem[sp++] = r2
 
-# Fetch n into r0.
-12    setn      r1 -3         # temp = -3
-13    add       r1 r14 r1     # temp = fp - 3
-14    loadr     r0  r1        # n = mem[temp]
-
-15    jnezn     r0 18         # if n != 0 jump to 24 (recursive step),
+12    loadn     r0 r14 -3     # n = mem[fp - 3]
+13    jnezn     r0 16         # if n != 0 jump to 16 (recursive step),
                               # else fall through (base case)
 
 # Base case.
-16    setn      r13 1         # output = 1
-17    jumpn     24            # jump to 24
+14    setn      r13 1         # output = 1
+15    jumpn     22            # jump to 22
 
 # Recursive step.
-18    copy      r2 r0         # r2 = n
-19    addn      r2 -1         # n = n - 1
-20    pushr     r2 r15        # mem[sp++] = n - 1
-21    calln     r12 6         # (n-1)! = factorialRec(n-1)
-22    addn      r15 -1        # sp = sp - 1
-23    mul       r13 r0 r13    # n! = n(n-1)!
+16    copy      r2 r0         # r2 = n
+17    addn      r2 -1         # n = n - 1
+18    pushr     r2 r15        # mem[sp++] = n - 1
+19    calln     r12 6         # (n-1)! = factorialRec(n-1)
+20    addn      r15 -1        # sp = sp - 1
+21    mul       r13 r0 r13    # n! = n(n-1)!
 
 # Restore registers used.
-24    popr      r2 r15        # r2 = mem[--r15]
-25    popr      r1 r15        # r1 = mem[--r15]
-26    popr      r0 r15        # r0 = mem[--r15]
+22    popr      r2 r15        # r2 = mem[--r15]
+23    popr      r1 r15        # r1 = mem[--r15]
+24    popr      r0 r15        # r0 = mem[--r15]
 
 # Restore fp and ra, and jump to ra (caller).
-27    popr      r14 r15       # fp = mem[--r15]
-28    popr      r12 r15       # ra = mem[--r15]
-29    jumpr     r12           # jump to caller
+25    popr      r14 r15       # fp = mem[--r15]
+26    popr      r12 r15       # ra = mem[--r15]
+27    jumpr     r12           # jump to caller
