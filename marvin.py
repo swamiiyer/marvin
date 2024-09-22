@@ -65,7 +65,7 @@ def main(argv):
 
         # Remove inlined comment if any.
         if "#" in line:
-            line = line[:line.rfind("#")].strip()
+            line = line[:line.find("#")].strip()
 
         # Exit with error if number of tokens in line is less than 2, or if the instruction ID is
         # invalid, or if the instruction is invalid.
