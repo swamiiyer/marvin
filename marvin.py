@@ -32,7 +32,6 @@ reg2bin = {"r0": "0000", "r1": "0001", "r2": "0010", "r3": "0011", "r4": "0100",
            "r6": "0110", "r7": "0111", "r8": "1000", "r9": "1001", "r10": "1010", "r11": "1011",
            "r12": "1100", "r13": "1101", "r14": "1110", "r15": "1111"}
 
-
 def main(argv):
     verbose = False
     inFile = None
@@ -156,7 +155,6 @@ def main(argv):
     if len(machineCodes) > 0:
         simulate(machineCodes)
 
-
 # Assembles the instructions in tuples and returns a list containing the corresponding machine
 # codes. Prints the assembled instructions to stdout if verbose is True.
 def assemble(tuples, verbose):
@@ -217,7 +215,6 @@ def assemble(tuples, verbose):
         print()
 
     return machineCodes
-
 
 # Simulate the assembled instructions in machineCodes.
 def simulate(machineCodes):
@@ -457,7 +454,6 @@ def simulate(machineCodes):
             arg3 = int(code[16:], 2)
             pc = arg3 if reg[arg1] != reg[arg2] else pc + 1
 
-
 # Returns True if s encodes an integer, and False otherwise.
 def isNum(s):
     ans = True
@@ -467,16 +463,13 @@ def isNum(s):
         ans = False
     return ans
 
-
 # Return True if n is a valid signed 16-bit integer, and False otherwise.
 def validNum(n):
     return -2 ** 15 <= n <= 2 ** 15 - 1
 
-
 # Return True if s is "r" followed by a number from the interval [0, 15], and False otherwise.
 def validReg(s):
     return s in {"r" + str(i) for i in range(16)}
-
 
 if __name__ == "__main__":
     main(sys.argv)
