@@ -1,6 +1,11 @@
 ## Marvin
 
-Marvin is a hypothetical computer with sixteen 16-bit registers and 65,536 32-bit words of main memory (RAM). In addition to the sixteen registers, Marvin has a 16-bit program counter `pc` and a 32-bit instruction register `ir`. A Marvin program (ie, a `.marv` file) is assembled and loaded into memory starting at location 0. Marvin supports 32 instructions, each of which accepts between 0 and 3 arguments (aka inputs). See [Marvin Machine Specification](https://www.cs.umb.edu/~siyer/teaching/marvinspec.pdf) for more details about the machine, including its instruction set. 
+Marvin is a hypothetical computer with sixteen 16-bit registers and 65,536 32-bit words of main memory (RAM). In 
+addition to the sixteen registers, Marvin has a 16-bit program counter `pc` and a 32-bit instruction register `ir`. A 
+Marvin program (ie, a `.marv` file) is assembled and loaded into memory starting at location 0. Marvin supports 32 
+instructions, each of which accepts between 0 and 3 arguments (aka inputs). See 
+[Marvin Machine Specification](https://www.cs.umb.edu/~siyer/teaching/marvinspec.pdf) for more details about the 
+machine, including its instruction set. 
 
 The program `marvin.py` is an emulator for the Marvin machine. Here is the usage string for the emulator:
 ```
@@ -18,7 +23,8 @@ the emulator prints the assembled instructions to stdout before simulating them.
 
 ```
 
-Here is a sample Marvin program called `Coundown.marv` that accepts `n` (int) from standard input and writes to standard output a countdown from `n` to 0.
+Here is a sample Marvin program called `Coundown.marv` that accepts `n` (int) from standard input and writes to 
+standard output a countdown from `n` to 0.
 ```
 # Accepts n (int) from standard input and writes a countdown from n to 0 to standard output.
 
